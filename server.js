@@ -1,13 +1,8 @@
-const app = require('./app');
+// Import the configured app and httpServer from app.js
+const { app, httpServer } = require('./app');
 const PORT = process.env.PORT || 3000;
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-const { httpServer } = require('./app');
-const PORT = process.env.PORT || 5000;
-
+// Start the server with Socket.io support
 httpServer.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running with Socket.io on port ${PORT}`);
 });
