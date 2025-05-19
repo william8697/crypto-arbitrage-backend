@@ -3,7 +3,7 @@ services:
     name: crypto-arbitrage-backend
     runtime: node
     buildCommand: npm install
-    startCommand: node server/server.js
+    startCommand: node server.js
     env:
       - key: MONGODB_URI
         value: mongodb+srv://mosesmwainaina1994:OWlondlAbn3bJuj4@cluster0.edyueep.mongodb.net/crypto-arbitrage?retryWrites=true&w=majority
