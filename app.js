@@ -1,34 +1,28 @@
-// 1. Import required packages
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-
-// 2. Initialize Socket.io
 const io = require('socket.io')(http);
+const Trade = require('./models/Trade');  // Make sure to import your models
+const User = require('./models/User');
 
-// 3. NOW you can use io
-io.on('connection', (socket) => {
-  // Your existing socket code here
-});
+// Helper function (must be defined or imported)
+async function getUpdatedBalance(userId) {
+  const user = await User.findById(userId);
+  return user.balance;
+}
+
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
   
-  // Listen for new trades
   socket.on('newTrade', async (tradeData) => {
     try {
-      // Save trade to database
       const trade = await Trade.create(tradeData);
-      
-      // Update user balance
       await User.findByIdAndUpdate(tradeData.userId, {
         $inc: { balance: tradeData.profit || -tradeData.amount },
         $push: { tradingHistory: trade._id }
       });
       
-      // Broadcast to all clients (admin dashboard)
       io.emit('tradeActivity', trade);
-      
-      // Notify specific user
       io.to(`user_${tradeData.userId}`).emit('balanceUpdate', {
         userId: tradeData.userId,
         newBalance: await getUpdatedBalance(tradeData.userId)
@@ -38,7 +32,6 @@ io.on('connection', (socket) => {
     }
   });
   
-  // Join user-specific room for private updates
   socket.on('joinUserRoom', (userId) => {
     socket.join(`user_${userId}`);
   });
@@ -47,3 +40,6 @@ io.on('connection', (socket) => {
     console.log('Client disconnected:', socket.id);
   });
 });
+
+// Add this export at the bottom
+module.exports = { app, httpServer };
