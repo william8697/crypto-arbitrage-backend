@@ -1,3 +1,15 @@
+// 1. Import required packages
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+
+// 2. Initialize Socket.io
+const io = require('socket.io')(http);
+
+// 3. NOW you can use io
+io.on('connection', (socket) => {
+  // Your existing socket code here
+});
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
   
